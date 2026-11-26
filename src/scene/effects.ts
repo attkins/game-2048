@@ -1,10 +1,14 @@
 import * as THREE from 'three'
 import { CHIP_HEIGHT } from './chip'
 import { Timeline, easeOutCubic } from './motion'
-import { createSparks, sparkOffset, sparkScale } from './sparks'
+import { createSparks, sparkOffset, sparkScale, type Spark } from './sparks'
 import { chipTheme } from './theme'
 
 const BURST_MS = 480
+const CONFETTI_MS = 900
+const CONFETTI_COUNT = 34
+const CONFETTI_POWER = 1.5
+const CONFETTI_COLORS = ['#FFD23F', '#FFFFFF', '#D7372F', '#2F6BDB', '#6CCB6E']
 const RING_MS = 260
 const RING_HEIGHT = 0.03
 const RING_INNER = 0.4
@@ -28,13 +32,22 @@ export class MergeEffects {
   /** Plays the effect on the cell at `position` for a new chip of `value`. */
   burst(position: THREE.Vector3, value: number): void {
     const theme = chipTheme(value)
-    const colors = [this.sparkMaterial(theme.face), this.sparkMaterial('#FFFFFF')]
+    this.play(position, [theme.face, '#FFFFFF'], createSparks(this.random), BURST_MS)
+  }
+
+  /** A bigger burst of colorful confetti for the 2048 chip. */
+  celebrate(position: THREE.Vector3): void {
+    const sparks = createSparks(this.random, CONFETTI_COUNT, CONFETTI_POWER, CONFETTI_COLORS.length)
+    this.play(position, CONFETTI_COLORS, sparks, CONFETTI_MS)
+  }
+
+  private play(position: THREE.Vector3, tints: readonly string[], sparks: readonly Spark[], burstMs: number): void {
+    const colors = tints.map((color) => this.sparkMaterial(color))
     const group = new THREE.Group()
     group.position.copy(position)
 
-    const sparks = createSparks(this.random)
     const meshes = sparks.map((spark) => {
-      const mesh = new THREE.Mesh(this.sparkGeometry, colors[spark.tint])
+      const mesh = new THREE.Mesh(this.sparkGeometry, colors[spark.tint % colors.length])
       mesh.scale.setScalar(spark.size)
       group.add(mesh)
       return mesh
@@ -48,9 +61,9 @@ export class MergeEffects {
 
     this.timeline.add({
       delay: 0,
-      duration: BURST_MS,
+      duration: burstMs,
       update: (progress) => {
-        const seconds = (progress * BURST_MS) / 1000
+        const seconds = (progress * burstMs) / 1000
         sparks.forEach((spark, index) => {
           const mesh = meshes[index]
           if (!mesh) return
@@ -58,7 +71,7 @@ export class MergeEffects {
           mesh.position.set(offset.x, CHIP_HEIGHT + 0.05 + offset.y, offset.z)
           mesh.scale.setScalar(spark.size * sparkScale(progress))
         })
-        const ringProgress = Math.min((progress * BURST_MS) / RING_MS, 1)
+        const ringProgress = Math.min((progress * burstMs) / RING_MS, 1)
         ring.scale.setScalar(1 + RING_GROWTH * easeOutCubic(ringProgress))
         ringMaterial.opacity = 0.85 * (1 - ringProgress)
       },

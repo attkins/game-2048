@@ -34,6 +34,20 @@ describe('createSparks', () => {
     expect(sparks.map((spark) => spark.tint)).toEqual([0, 1, 0, 1])
   })
 
+  it('scales the speed with the power', () => {
+    const normal = createSparks(() => 0.5, 3)
+    const strong = createSparks(() => 0.5, 3, 2)
+    strong.forEach((spark, index) => {
+      expect(spark.vy).toBeCloseTo((normal[index]?.vy ?? 0) * 2)
+      expect(spark.vx).toBeCloseTo((normal[index]?.vx ?? 0) * 2)
+    })
+  })
+
+  it('takes turns in as many colors as asked for', () => {
+    const sparks = createSparks(() => 0.5, 7, 1, 3)
+    expect(sparks.map((spark) => spark.tint)).toEqual([0, 1, 2, 0, 1, 2, 0])
+  })
+
   it('keeps every spark small', () => {
     const sparks = createSparks(sequence([0, 1 - Number.EPSILON]))
     expect(sparks.every((spark) => spark.size > 0.04 && spark.size < 0.1)).toBe(true)

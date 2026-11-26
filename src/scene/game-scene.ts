@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import type { Board, Cell, Merge, Spawn, TileMove } from '../game'
+import { WIN_VALUE, type Board, type Cell, type Merge, type Spawn, type TileMove } from '../game'
 import { createBoard } from './board'
 import { CHIP_HEIGHT, createChipFactory, type ChipFactory } from './chip'
 import { MergeEffects } from './effects'
@@ -29,6 +29,10 @@ const SPAWN_MS = 380
 const LAND_SQUASH = 0.16
 const POP_HOP = 0.32
 const POP_GROW = 0.18
+// The 2048 chip gets a longer, bigger pop with a full turn.
+const CELEBRATE_MS = 850
+const CELEBRATE_HOP = 0.75
+const CELEBRATE_GROW = 0.3
 const SPAWN_DROP = 1.3
 
 /** What a move changed on the board. `MoveOutcome` from the game logic fits this shape. */
@@ -76,6 +80,7 @@ export class GameScene {
     this.renderer.setAnimationLoop((time: number) => {
       // A long pause, for example in a background tab, must not make the chips jump through their motion.
       this.timeline.tick(Math.min(time - lastTime, 50))
+      if (!this.reducedMotion) this.chipFactory.animate(time)
       lastTime = time
       this.renderer.render(this.scene, this.camera)
     })
@@ -130,20 +135,27 @@ export class GameScene {
     for (const merge of change.merges) {
       const key = this.key(merge.cell)
       const old = merging.get(key) ?? []
+      const celebrate = merge.value >= WIN_VALUE
+      const hop = celebrate ? CELEBRATE_HOP : POP_HOP
+      const grow = celebrate ? CELEBRATE_GROW : POP_GROW
       let chip: THREE.Group | null = null
       this.timeline.add({
         delay: slide,
-        duration: this.reducedMotion ? 0 : POP_MS,
+        duration: this.reducedMotion ? 0 : celebrate ? CELEBRATE_MS : POP_MS,
         update: (progress) => {
           if (!chip) {
             old.forEach((oldChip) => this.chips.remove(oldChip))
             chip = this.chipFactory.create(merge.value)
             this.placeChip(chip, merge.cell)
-            if (!this.reducedMotion) this.effects.burst(this.cellPosition(merge.cell), merge.value)
+            if (!this.reducedMotion) {
+              this.effects.burst(this.cellPosition(merge.cell), merge.value)
+              if (celebrate) this.effects.celebrate(this.cellPosition(merge.cell))
+            }
           }
           const wave = progress >= 1 ? 0 : Math.sin(Math.PI * progress)
-          chip.position.y = POP_HOP * wave
-          chip.scale.setScalar(1 + POP_GROW * wave)
+          chip.position.y = hop * wave
+          chip.scale.setScalar(1 + grow * wave)
+          chip.rotation.y = celebrate && progress < 1 ? Math.PI * 2 * easeOutCubic(progress) : 0
         },
       })
     }

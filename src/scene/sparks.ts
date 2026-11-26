@@ -11,25 +11,28 @@ export interface Spark {
   readonly vz: number
   /** Radius of the spark in board units. */
   readonly size: number
-  /** Which of the two colors of the burst the spark uses. */
-  readonly tint: 0 | 1
+  /** Which color of the burst the spark uses. An index into the colors of the effect. */
+  readonly tint: number
 }
 
 export const SPARK_COUNT = 10
 /** Pull towards the board in board units per second squared. */
 export const SPARK_GRAVITY = 9
 
-/** Sparks fly out evenly around the chip with a little jitter, and always upwards first. */
-export function createSparks(random: Random, count: number = SPARK_COUNT): Spark[] {
+/**
+ * Sparks fly out evenly around the chip with a little jitter, and always upwards first. `power`
+ * scales the start velocity, `tints` is how many colors the sparks take turns in.
+ */
+export function createSparks(random: Random, count: number = SPARK_COUNT, power = 1, tints = 2): Spark[] {
   return Array.from({ length: count }, (_, index) => {
     const angle = (index / count) * Math.PI * 2 + (random() - 0.5) * 0.6
     const outward = 1.3 + random() * 0.9
     return {
-      vx: Math.cos(angle) * outward,
-      vy: 2.2 + random() * 1.4,
-      vz: Math.sin(angle) * outward,
+      vx: Math.cos(angle) * outward * power,
+      vy: (2.2 + random() * 1.4) * power,
+      vz: Math.sin(angle) * outward * power,
       size: 0.045 + random() * 0.04,
-      tint: index % 2 === 0 ? 0 : 1,
+      tint: index % tints,
     }
   })
 }
