@@ -62,6 +62,10 @@ Tech stack: TypeScript in strict mode, Three.js, Vite and Vitest (D-021). The ga
 - Types are `feat`, `fix`, `refactor`, `perf`, `style`, `docs`, `test`, `build`, `ci` and `chore`. A scope is required for `feat`, `fix`, `refactor` and `perf` and optional for the others. Use exactly one scope per commit, taken from the table below (D-025).
 - commitlint checks every commit message in a `commit-msg` hook (D-026). When you suggest a message, make sure it passes. A new scope needs a decision in `docs/decisions.md` first, then it is added to `commitlint.config.js`.
 - When you suggest a commit message, make it fit the change. One commit stays focused on one topic.
+- After every state that can be committed (a finished backlog item, a working fix, a docs update), always hand over the commit proposal in the same reply, without being asked. Do not wait for the developer to request it.
+- If one commit covers the change, give the message. If the change touches several scopes, give a Bash script draft that the developer can run: one `git add <paths>` plus one `git commit -m "<header>" -m "<body>"` per commit, in an order where every commit builds on the previous ones. Each commit has exactly one scope.
+- Use explicit paths in `git add`, never `git add .` or `git add -A`. Do not put attribution trailers into the proposal, the commits are the developer's own.
+- The script is only a draft in the chat. Never run it yourself.
 
 | Scope | Use it for |
 |-------|------------|
