@@ -45,14 +45,10 @@ async function start(): Promise<void> {
 
   const hud = createHud(document.body, restart)
 
-  function show(): void {
-    scene.setBoard(state.board)
-    hud.update(state.score, best, state.status)
-  }
-
   function restart(): void {
     state = newGame(size)
-    show()
+    scene.setBoard(state.board)
+    hud.update(state.score, best, state.status)
   }
 
   function play(direction: Direction): void {
@@ -60,14 +56,15 @@ async function start(): Promise<void> {
     if (!outcome.moved) return
     state = outcome.state
     best = Math.max(best, saveBestScore(storage, size, state.score), state.score)
-    show()
+    scene.showMove(outcome)
+    hud.update(state.score, best, state.status)
   }
 
   attachInput(app, play)
   window.addEventListener('keydown', (event) => {
     if (event.key.toLowerCase() === 'n' && !event.metaKey && !event.ctrlKey && !event.altKey) restart()
   })
-  show()
+  restart()
 }
 
 start().catch((error: unknown) => {
