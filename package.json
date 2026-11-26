@@ -1,6 +1,6 @@
 {
   "name": "game-2048",
-  "version": "0.0.0",
+  "version": "0.3.0",
   "private": true,
   "description": "A 2048-style merge puzzle with 3D poker chips, played in the browser",
   "type": "module",
