@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+*.tsbuildinfo
+
+.idea/
+.vscode/
+
+# Local environment values
+.env.local
+.env.*.local
