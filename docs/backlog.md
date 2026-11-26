@@ -22,17 +22,18 @@ ID prefixes: `F` game logic and features, `V` visuals and animation, `U` user in
 | ID | Task | Status |
 |----|------|--------|
 | T1 | Project setup with Vite, TypeScript, Three.js and Vitest, taken over from the Angelkarte (D-021) | done 2026-11-26 |
-| T2 | GitHub Actions workflow that tests, builds and deploys to GitHub Pages (D-022) | done 2026-11-26. Still to do by the developer: create the repo `attkins/game-2048`, then enable Pages in the repo settings with the source "GitHub Actions" |
+| T2 | GitHub Actions workflow that tests, builds and deploys to GitHub Pages (D-022) | done 2026-11-26, `.github/workflows/deploy.yml` written, not run on GitHub yet. Still to do by the developer: create the repo `attkins/game-2048`, then enable Pages in the repo settings with the source "GitHub Actions" |
 | T3 | Changelog with git-cliff and a release script (D-023) | done 2026-11-26. The first `npm run release` creates `CHANGELOG.md` and the tag `v0.1.0` |
 | T4 | Playwright end-to-end smoke test, desktop and mobile viewport | open, only useful once something is playable (0.2) |
+| T5 | Commit rules with fixed types and scopes, enforced by commitlint and a commit-msg hook (D-025, D-026) | done 2026-11-26 |
 
 ## Game logic
 
 | ID | Task | Status |
 |----|------|--------|
-| F1 | Board logic without any rendering: grid of any size from 3x3 to 6x6, slide in four directions, merge once per move, spawn 2 (90 percent) or 4 (10 percent). Covered by Vitest specs | open |
-| F2 | Game over detection (board full and no merge possible) and win detection (2048 chip reached) | open |
-| F3 | Score and best score, best score stored in localStorage per board size | open |
+| F1 | Board logic without any rendering: grid of any size from 3x3 to 6x6, slide in four directions, merge once per move, spawn 2 (90 percent) or 4 (10 percent). Covered by Vitest specs | done 2026-11-26. See `src/game/`, 79 specs |
+| F2 | Game over detection (board full and no merge possible) and win detection (2048 chip reached) | done 2026-11-26. See `src/game/`, 79 specs |
+| F3 | Score and best score, best score stored in localStorage per board size | done 2026-11-26. See `src/game/`, 79 specs |
 | F4 | Input layer: arrow keys, touch swipe and mouse drag become the same four move commands | open |
 
 ## Visuals

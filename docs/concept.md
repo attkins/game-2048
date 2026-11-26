@@ -69,6 +69,7 @@ Colors should be saturated and friendly (candy-like) so they stand out on the pa
 - Game logic separated from rendering, so the rules can be unit tested without a browser.
 - Input layer unifies keyboard, swipe and mouse drag into the same four move commands.
 - Changelog from Conventional Commits with git-cliff (D-023).
+- Commit messages use fixed types and scopes, checked by commitlint in a commit-msg hook (D-025, D-026).
 - All code, comments and documentation in English (D-002).
 
 ## 7. MVP scope (D-009)

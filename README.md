@@ -46,6 +46,7 @@ npm run preview     # serve the build locally
 npm run type-check  # TypeScript only
 npm test            # run the unit tests once
 npm run test:watch  # run the unit tests on every change
+npm run lint:commit # check the last commit message against the commit rules
 ```
 
 ## Tech stack
@@ -61,6 +62,7 @@ The game logic is separate from the rendering, so the rules can be tested withou
 ```
 index.html                  Vite entry point
 src/main.ts                 bootstrap, currently a placeholder scene
+src/game/                   game logic without DOM and Three.js: board, merge, spawn, score, best score
 src/style.css               global styles
 src/env.d.ts                type for the version injected by Vite
 src/**/*.spec.ts            unit tests, next to the file they test
@@ -68,6 +70,9 @@ scripts/release.mjs         release script, see below
 docs/                       concept, decisions, backlog, roadmap and ideas
 .github/workflows/          deploy workflow
 cliff.toml                  git-cliff configuration for the changelog
+commitlint.config.js        rules for commit messages (types and scopes)
+.githooks/commit-msg        hook that runs commitlint, enabled by npm install
+tests/                      specs that are not tied to one source file
 ```
 
 ## Deployment
@@ -78,7 +83,26 @@ One-time setup in the GitHub repository: open Settings, then Pages, and choose "
 
 ## Changelog and releases
 
-`CHANGELOG.md` is generated from the commit messages with [git-cliff](https://git-cliff.org), configured in `cliff.toml`. It only works if commits follow [Conventional Commits](https://www.conventionalcommits.org): `feat:` for new features, `fix:` for fixes, plus `docs:`, `test:`, `refactor:`, `build:`, `ci:` and `chore:`. Commits that do not follow the convention are left out.
+`CHANGELOG.md` is generated from the commit messages with [git-cliff](https://git-cliff.org), configured in `cliff.toml`. It only works if commits follow [Conventional Commits](https://www.conventionalcommits.org): `feat:` for new features, `fix:` for fixes, plus `docs:`, `test:`, `refactor:`, `build:`, `ci:` and `chore:`. Commits that do not follow the convention are left out. Inside a group, entries are sorted by scope and show it in front, for example `logic: merge once per move`.
+
+### Commit messages
+
+A `commit-msg` hook checks every message with [commitlint](https://commitlint.js.org). `npm install` turns the hook on by pointing `core.hooksPath` to `.githooks/`. The format is `type(scope): subject`. The subject is lower case, has no full stop and the whole first line stays within 72 characters.
+
+A scope is required for `feat`, `fix`, `refactor` and `perf` and optional for the other types. There is exactly one scope per commit and it comes from this list:
+
+| Scope | Use it for |
+|-------|------------|
+| `logic` | Rules, game state, score and best score in `src/game/` |
+| `scene` | Three.js scene, board, chips, camera and light |
+| `fx` | Animations and effects such as slide, spawn and merge |
+| `input` | Keyboard, swipe and mouse drag |
+| `ui` | Bars, screens, layout and the board size selection |
+| `deps` | Dependencies and build configuration |
+| `ci` | GitHub Actions workflow and deployment |
+| `release` | Release script, git-cliff and changelog |
+
+Examples: `feat(logic): merge once per move`, `fix(input): ignore short swipes`, `docs: update the concept`, `chore(release): 0.1.0`. A new scope needs a decision in [docs/decisions.md](docs/decisions.md) first.
 
 ```sh
 npm run changelog       # update CHANGELOG.md, new commits go under "Unreleased"
