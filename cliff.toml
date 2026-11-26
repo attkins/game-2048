@@ -16,10 +16,14 @@ body = """
 {% endif %}\
 {% for group, commits in commits | group_by(attribute="group") %}
 ### {{ group | striptags | trim }}
-{% for commit in commits %}
+{% for commit in commits | filter(attribute="scope") | sort(attribute="scope") %}
+- {{ commit.scope }}: {{ commit.message | split(pat="\n") | first | trim }} \
+([{{ commit.id | truncate(length=7, end="") }}](https://github.com/attkins/game-2048/commit/{{ commit.id }}))\
+{% endfor %}\
+{% for commit in commits %}{% if not commit.scope %}
 - {{ commit.message | split(pat="\n") | first | trim | upper_first }} \
 ([{{ commit.id | truncate(length=7, end="") }}](https://github.com/attkins/game-2048/commit/{{ commit.id }}))\
-{% endfor %}
+{% endif %}{% endfor %}
 {% endfor %}
 """
 trim = true
