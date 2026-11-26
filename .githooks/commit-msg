@@ -1,0 +1,3 @@
+#!/bin/sh
+# Checks the commit message against commitlint.config.js. Enabled by "npm install" (see the prepare script).
+npx --no -- commitlint --edit "$1"
