@@ -1,0 +1,26 @@
+/* Placeholder background until the color proposal P-1 in docs/decisions.md is confirmed. */
+:root {
+  --background: #fff1d6;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--background);
+  overflow: hidden;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+}
+
+#version {
+  position: fixed;
+  right: 0.75rem;
+  bottom: 0.5rem;
+  font: 0.75rem system-ui, sans-serif;
+  color: rgb(0 0 0 / 0.35);
+  pointer-events: none;
+}
