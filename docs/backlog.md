@@ -44,7 +44,7 @@ ID prefixes: `F` game logic and features, `V` visuals and animation, `U` user in
 | V2 | Chip model: thick, chunky, softly rounded, rim band, number on the top face, color per value from the table in `concept.md` (D-016) | done 2026-11-26 |
 | V3 | Fixed oblique camera at about 40 degrees elevation (angle still to confirm, Q2), soft key light plus ambient light, toon-like shading. The setup contains a placeholder scene for the camera | done 2026-11-26 |
 | V4 | Slide animation with easing, squash and bounce on landing, spawn drops in from above | done 2026-11-26. Slide with ease-out, landing squash, spawn drops in and bounces, reduced motion is respected. See `src/scene/motion.ts` |
-| V5 | Merge effect: flash, small spark particles, the new chip hops up (D-017) | in progress. The new chip already hops and grows, flash and sparks are still open |
+| V5 | Merge effect: flash, small spark particles, the new chip hops up (D-017) | done 2026-11-26. The new chip hops and grows, a white ring flashes and ten sparks in the chip color fly up. See `src/scene/effects.ts` and `src/scene/sparks.ts` |
 | V6 | 2048 chip with golden glow and a short celebration | open |
 
 ## User interface

@@ -66,6 +66,7 @@ Tech stack: TypeScript in strict mode, Three.js, Vite and Vitest (D-021). The ga
 - If one commit covers the change, give the message. If the change touches several scopes, give a Bash script draft that the developer can run: one `git add <paths>` plus one `git commit -m "<header>" -m "<body>"` per commit, in an order where every commit builds on the previous ones. Each commit has exactly one scope.
 - Use explicit paths in `git add`, never `git add .` or `git add -A`. Do not put attribution trailers into the proposal, the commits are the developer's own.
 - The script is only a draft in the chat. Never run it yourself.
+- When the goal of a release in `docs/roadmap.md` is met and its work is committed, remind the developer to cut the release and name the command, for example `npm run release 0.3.0`. Releases follow the roadmap numbers, the version is passed explicitly. Never run it yourself.
 
 | Scope | Use it for |
 |-------|------------|

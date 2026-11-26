@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import type { Board, Cell, Merge, Spawn, TileMove } from '../game'
 import { createBoard } from './board'
 import { CHIP_HEIGHT, createChipFactory, type ChipFactory } from './chip'
+import { MergeEffects } from './effects'
 import { BASE_HEIGHT, boardWidth, cellCenter } from './layout'
 import { Timeline, easeOutBack, easeOutBounce, easeOutCubic, squashAmount } from './motion'
 import { createToonGradient } from './toon'
@@ -46,6 +47,7 @@ export class GameScene {
   /** The chip standing in each cell, by row * size + col. Valid whenever no animation is running. */
   private readonly cellChips = new Map<number, THREE.Group>()
   private readonly timeline = new Timeline()
+  private readonly effects = new MergeEffects(this.scene, this.timeline)
   private readonly reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
   private readonly chipFactory: ChipFactory
   private readonly gradient = createToonGradient()
@@ -137,6 +139,7 @@ export class GameScene {
             old.forEach((oldChip) => this.chips.remove(oldChip))
             chip = this.chipFactory.create(merge.value)
             this.placeChip(chip, merge.cell)
+            if (!this.reducedMotion) this.effects.burst(this.cellPosition(merge.cell), merge.value)
           }
           const wave = progress >= 1 ? 0 : Math.sin(Math.PI * progress)
           chip.position.y = POP_HOP * wave
@@ -170,6 +173,7 @@ export class GameScene {
     this.timeline.finishAll()
     this.resizeObserver.disconnect()
     this.renderer.setAnimationLoop(null)
+    this.effects.dispose()
     this.chipFactory.dispose()
     this.gradient.dispose()
     this.renderer.dispose()
