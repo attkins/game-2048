@@ -24,3 +24,53 @@ body {
   color: rgb(0 0 0 / 0.35);
   pointer-events: none;
 }
+
+/* Placeholder look of the score and the messages until the real bars arrive (backlog U1 and U2). */
+:root {
+  --font: 'Fredoka', ui-rounded, 'Arial Rounded MT Bold', 'Varela Round', system-ui, sans-serif;
+  --ink: #3b2a1a;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--ink);
+}
+
+.hud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hud-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: max(1rem, env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right)) 0
+    max(1.25rem, env(safe-area-inset-left));
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.hud-message {
+  position: absolute;
+  left: 50%;
+  bottom: max(2rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  max-width: calc(100% - 2.5rem);
+  padding: 0.9rem 1.6rem;
+  border: 0;
+  border-radius: 2rem;
+  background: #c93a32;
+  color: #ffffff;
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 700;
+  box-shadow: 0 5px 0 #8e2520;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.hud-message[hidden] {
+  display: none;
+}

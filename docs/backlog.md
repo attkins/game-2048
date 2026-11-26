@@ -24,7 +24,7 @@ ID prefixes: `F` game logic and features, `V` visuals and animation, `U` user in
 | T1 | Project setup with Vite, TypeScript, Three.js and Vitest, taken over from the Angelkarte (D-021) | done 2026-11-26 |
 | T2 | GitHub Actions workflow that tests, builds and deploys to GitHub Pages (D-022) | done 2026-11-26, `.github/workflows/deploy.yml` written, not run on GitHub yet. Still to do by the developer: create the repo `attkins/game-2048`, then enable Pages in the repo settings with the source "GitHub Actions" |
 | T3 | Changelog with git-cliff and a release script (D-023) | done 2026-11-26. The first `npm run release` creates `CHANGELOG.md` and the tag `v0.1.0` |
-| T4 | Playwright end-to-end smoke test, desktop and mobile viewport | open, only useful once something is playable (0.2) |
+| T4 | Playwright end-to-end smoke test, desktop and mobile viewport | open, the game is playable now (0.2), needs a new dev dependency, ask first |
 | T5 | Commit rules with fixed types and scopes, enforced by commitlint and a commit-msg hook (D-025, D-026) | done 2026-11-26 |
 
 ## Game logic
@@ -34,15 +34,15 @@ ID prefixes: `F` game logic and features, `V` visuals and animation, `U` user in
 | F1 | Board logic without any rendering: grid of any size from 3x3 to 6x6, slide in four directions, merge once per move, spawn 2 (90 percent) or 4 (10 percent). Covered by Vitest specs | done 2026-11-26. See `src/game/`, 79 specs |
 | F2 | Game over detection (board full and no merge possible) and win detection (2048 chip reached) | done 2026-11-26. See `src/game/`, 79 specs |
 | F3 | Score and best score, best score stored in localStorage per board size | done 2026-11-26. See `src/game/`, 79 specs |
-| F4 | Input layer: arrow keys, touch swipe and mouse drag become the same four move commands | open |
+| F4 | Input layer: arrow keys, touch swipe and mouse drag become the same four move commands | done 2026-11-26 |
 
 ## Visuals
 
 | ID | Task | Status |
 |----|------|--------|
-| V1 | Toy board: pastel wooden plate with rounded frame and recessed cells, size follows the selected board size (D-014) | open |
-| V2 | Chip model: thick, chunky, softly rounded, rim band, number on the top face, color per value from the table in `concept.md` (D-016) | open |
-| V3 | Fixed oblique camera at about 50 degrees, soft key light plus ambient light, toon-like shading. The setup contains a placeholder scene for the camera | open |
+| V1 | Toy board: pastel wooden plate with rounded frame and recessed cells, size follows the selected board size (D-014) | done 2026-11-26 |
+| V2 | Chip model: thick, chunky, softly rounded, rim band, number on the top face, color per value from the table in `concept.md` (D-016) | done 2026-11-26 |
+| V3 | Fixed oblique camera at about 40 degrees elevation (angle still to confirm, Q2), soft key light plus ambient light, toon-like shading. The setup contains a placeholder scene for the camera | done 2026-11-26 |
 | V4 | Slide animation with easing, squash and bounce on landing, spawn drops in from above | open |
 | V5 | Merge effect: flash, small spark particles, the new chip hops up (D-017) | open |
 | V6 | 2048 chip with golden glow and a short celebration | open |

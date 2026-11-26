@@ -1,55 +1,77 @@
-import * as THREE from 'three'
+import {
+  DEFAULT_BOARD_SIZE,
+  isValidBoardSize,
+  loadBestScore,
+  move,
+  newGame,
+  saveBestScore,
+  type Direction,
+  type GameState,
+  type KeyValueStorage,
+} from './game'
+import { createHud } from './hud'
+import { attachInput } from './input/input'
+import { GameScene } from './scene'
 
-// Placeholder scene that proves the setup works: a toy board seen at an oblique angle with one gold chip.
-// The real board, chips and camera come with the backlog items V1 to V3.
-
-const CAMERA_TILT_DEG = 50
-const CAMERA_DISTANCE = 9
-const BOARD_SIZE = 4
-
-const app = document.getElementById('app')
-const versionLabel = document.getElementById('version')
-if (!app) throw new Error('Missing #app element')
-if (versionLabel) versionLabel.textContent = `v${__APP_VERSION__}`
-
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-app.appendChild(renderer.domElement)
-
-const scene = new THREE.Scene()
-const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100)
-const tilt = THREE.MathUtils.degToRad(CAMERA_TILT_DEG)
-camera.position.set(0, Math.sin(tilt) * CAMERA_DISTANCE, Math.cos(tilt) * CAMERA_DISTANCE)
-camera.lookAt(0, 0, 0)
-
-scene.add(new THREE.AmbientLight(0xffffff, 1.2))
-const keyLight = new THREE.DirectionalLight(0xffffff, 2.2)
-keyLight.position.set(3, 6, 4)
-scene.add(keyLight)
-
-const board = new THREE.Mesh(
-  new THREE.BoxGeometry(BOARD_SIZE + 0.6, 0.3, BOARD_SIZE + 0.6),
-  new THREE.MeshStandardMaterial({ color: 0xe8c9a0, roughness: 0.8 }),
-)
-board.position.y = -0.15
-scene.add(board)
-
-const chip = new THREE.Mesh(
-  new THREE.CylinderGeometry(0.42, 0.42, 0.26, 48),
-  new THREE.MeshStandardMaterial({ color: 0xf2b705, roughness: 0.35, metalness: 0.2 }),
-)
-chip.position.set(0.5, 0.13, 0.5)
-scene.add(chip)
-
-function resize(): void {
-  const { clientWidth: width, clientHeight: height } = app as HTMLElement
-  renderer.setSize(width, height)
-  camera.aspect = width / height
-  // Narrow screens need more distance so the whole board stays in view.
-  camera.zoom = Math.min(1, camera.aspect * 1.1)
-  camera.updateProjectionMatrix()
+/** The board size comes from the address for now, for example ?size=5. The size selector arrives with U1. */
+function readBoardSize(): number {
+  const requested = Number(new URLSearchParams(window.location.search).get('size'))
+  return isValidBoardSize(requested) ? requested : DEFAULT_BOARD_SIZE
 }
 
-window.addEventListener('resize', resize)
-resize()
-renderer.setAnimationLoop(() => renderer.render(scene, camera))
+/** Reading localStorage can throw, for example when the browser blocks storage. */
+function getStorage(): KeyValueStorage | null {
+  try {
+    return window.localStorage
+  } catch {
+    return null
+  }
+}
+
+async function start(): Promise<void> {
+  const app = document.getElementById('app')
+  const versionLabel = document.getElementById('version')
+  if (!app) throw new Error('Missing #app element')
+  if (versionLabel) versionLabel.textContent = `v${__APP_VERSION__}`
+
+  // The chip numbers are drawn with the page font, so wait until it is ready.
+  await document.fonts?.ready
+
+  const size = readBoardSize()
+  const storage = getStorage()
+  const scene = new GameScene(app, size)
+  let state: GameState = newGame(size)
+  let best = loadBestScore(storage, size)
+
+  const hud = createHud(document.body, restart)
+
+  function show(): void {
+    scene.setBoard(state.board)
+    hud.update(state.score, best, state.status)
+  }
+
+  function restart(): void {
+    state = newGame(size)
+    show()
+  }
+
+  function play(direction: Direction): void {
+    const outcome = move(state, direction)
+    if (!outcome.moved) return
+    state = outcome.state
+    best = Math.max(best, saveBestScore(storage, size, state.score), state.score)
+    show()
+  }
+
+  attachInput(app, play)
+  window.addEventListener('keydown', (event) => {
+    if (event.key.toLowerCase() === 'n' && !event.metaKey && !event.ctrlKey && !event.altKey) restart()
+  })
+  show()
+}
+
+start().catch((error: unknown) => {
+  console.error(error)
+  const app = document.getElementById('app')
+  if (app) app.textContent = 'The game could not start. Does your browser support WebGL?'
+})

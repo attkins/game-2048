@@ -8,7 +8,7 @@ Working title: "Game 2048". It may be renamed later.
 
 ## Status
 
-The project is in the concept phase. The setup is done and a placeholder scene (a board with one chip) is deployed, but the game is not playable yet. See [docs/roadmap.md](docs/roadmap.md) for what comes next.
+Release 0.2 is playable: a full game runs on desktop and phone with 3D chips on a toy board. Chips still jump from cell to cell, the slide and merge animations come next. Use `?size=3` to `?size=6` in the URL to change the board size. See [docs/roadmap.md](docs/roadmap.md) for what comes next.
 
 ## How it plays
 
@@ -61,7 +61,10 @@ The game logic is separate from the rendering, so the rules can be tested withou
 
 ```
 index.html                  Vite entry point
-src/main.ts                 bootstrap, currently a placeholder scene
+src/main.ts                 bootstrap, wires game state, input, scene and HUD
+src/input/                  keyboard, swipe and mouse drag become four move commands
+src/scene/                  Three.js board, chips, lights and camera
+src/hud.ts                  temporary score bar and game over message
 src/game/                   game logic without DOM and Three.js: board, merge, spawn, score, best score
 src/style.css               global styles
 src/env.d.ts                type for the version injected by Vite
