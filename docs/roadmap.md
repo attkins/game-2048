@@ -10,9 +10,9 @@ Dates are left open on purpose, this is a hobby project. A release ships when it
 
 | Release | Theme | Status |
 |---------|-------|--------|
-| 0.1 | Rules | planned |
-| 0.2 | Chips on the board | planned |
-| 0.3 | Alive | planned |
+| 0.1 | Rules | done |
+| 0.2 | Chips on the board | done, T4 still open |
+| 0.3 | Alive | in progress |
 | 0.4 | Complete game | planned |
 | 1.0 | MVP | planned |
 | later | Ideas without a date, see [ideas.md](ideas.md) | |
